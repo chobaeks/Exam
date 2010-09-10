@@ -4,7 +4,7 @@ int
 main (int   argc,
       char *argv[])
 {
-  printf ("테스트");
+  printf ("checkout master");
 
   return 0;
 }
