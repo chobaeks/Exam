@@ -2,6 +2,7 @@ class Books
 {
   String title;
   String author;
+  String test;
 
   public static void main (String[] args)
     {
