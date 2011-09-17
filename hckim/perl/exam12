@@ -1,0 +1,78 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+
+my @test;
+my $input;
+my $bestfilename;
+my $bestfiletime;
+my $best = 0;
+my @readwriter;
+
+while (1)
+{
+    print "Input file path : (all file path input after input 'end') ";
+    chomp ($input = <STDIN>);
+
+    if ($input eq "end")
+    {
+        last;
+    }
+    elsif (!($input =~ /^(\.|\/)/))
+    {
+        print "Not file path input.\n";
+
+        redo;
+    }
+    else
+    {
+        push @test, $input;
+    }
+}
+
+foreach (@test)
+{
+    if (-e $_)
+    {
+        print "$_ : Found\n";
+        -r $_ ? print "$_ : Read\n" : print"$_ : Not Read\n";
+        -w $_ ? print "$_ : Write\n" : print"$_ : Not Write\n";
+        -x $_ ? print "$_ : Play\n" : print"$_ : Not Play\n";
+        my ($dev, $ino, $mode, $nlink, $uid, $gid, $redv, $size, $atime,
+                $mtime, $ctime, $blksize, $blcoks) = stat ($_);
+
+        if (-r $_ and -w _)
+        {
+            push @readwriter, $_;
+        }
+
+        if ($best < $atime)
+        {
+            $best = $atime;
+            $bestfilename = $_;
+            $bestfiletime = $atime;
+        }
+    }
+    else
+    {
+        print "$_ : Not Found\n";
+    }
+}
+
+if ($bestfilename)
+{
+    print "Best file longer is \"$bestfilename\" ";
+    print my $date = localtime $bestfiletime;
+    print "\n";
+}
+
+if (@readwriter != 0)
+{
+    print "\nRead + Write file list\n";
+
+    foreach (@readwriter)
+    {
+        print $_ . "\n";
+    }
+}
