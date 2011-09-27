@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+
+my @directory;
+
+print "Input move directory : ";
+
+chomp (my $dir = <STDIN>);
+
+if ($dir =~ /\s+/ or $dir eq "")
+{
+    opendir DH, "/home" or die print "Cannot open /home : $!\n";
+}
+else
+{
+    opendir DH, $dir or die print "Cannot open $dir :$!\n";
+}
+
+foreach (readdir DH)
+{
+    push @directory, $_;
+}
+
+closedir DH;
+
+my @sort = sort (@directory);
+
+foreach (@sort)
+{
+    print $_ . "\n";
+}
+

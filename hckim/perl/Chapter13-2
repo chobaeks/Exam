@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+
+print "Input move directory : ";
+
+chomp (my $dir = <STDIN>);
+
+if ($dir =~ /\s+/ or $dir eq "")
+{
+    chdir "/home";
+}
+else
+{
+    chdir $dir or print "Cannot change directory $dir!\n";
+}
+
+my @directory;
+
+foreach (glob ".* *")
+{
+#next if $_ =~ /\./ or /\.\./;
+    push @directory, $_;
+}
+
+my @sorted = sort (@directory);
+
+foreach (@sorted)
+{
+    print $_ . "\n";
+}

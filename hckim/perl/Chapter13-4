@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+
+unlink $ARGV[0] or print "Error : $!\n";
