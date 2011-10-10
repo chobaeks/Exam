@@ -1,0 +1,10 @@
+#!/usr/bin/perlu
+use strict;
+use warnings;
+use 5.010;
+use File::Copy;
+
+chomp (my $dir = <STDIN>);
+chomp (my $dir2 = <STDIN>);
+
+print copy ($dir, $dir2) or die "$!";
