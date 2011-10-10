@@ -1,10 +1,41 @@
-#!/usr/bin/perlu
+#!/usr/bin/perl
 use strict;
 use warnings;
 use 5.010;
 use File::Copy;
 
-chomp (my $dir = <STDIN>);
-chomp (my $dir2 = <STDIN>);
+my $dir;
+my @dirtree;
+my $directory;
 
-print copy ($dir, $dir2) or die "$!";
+$directory = "c:\\test";
+
+opendir ($dir, $directory); 
+
+foreach (readdir ($dir))
+{
+
+	print $directory . "\\" . $_;
+
+	next LINE if $_ eq "." or $_ eq "..";
+	
+	if (-d $directory . "\\" . $_ == 1)
+	{
+		print " : folder";
+
+		$directory = $directory . "\\" . $_;
+	}
+	else
+	{
+		print " : file";
+
+		push ( @dirtree, $directory."\\".$_);
+	}
+
+	print "\n";
+}
+
+foreach (@dirtree)
+{
+	print $_ . "\n";
+}
