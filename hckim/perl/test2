@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+use File::Copy;
+
+copyandrename("c:\\", "1.txt", "c:\\test");
+
+sub copyandrename
+{
+(my $sec, my $min, my $hour, my $mday, my $mon, my $year) = localtime;
+my $dir;
+my $file;
+my $filedir;
+my $filename;
+
+$year = 1900 + $year;
+++$mon;
+
+$filedir = $_[0];
+$filename = $_[1];
+$dir = $_[2];
+$file = $filedir . $filename;
+
+print "$dir is not directory : $!" unless 1 == -d $dir;
+print "$file is nothing : $!" unless 1 == -e $file;
+
+if (-e $dir . "\\" . $filename == 1)
+{
+copy ($file, "c:\\skoipatch\\tmp\\new");
+copy ($dir . "\\" . $filename, "c:\\skoipatch\\tmp\\old");
+
+print 1;
+rename ($dir . "\\" . $filename, $filedir . $filename . "_" . $year . $mon . $mday . $hour. $min. $sec) or die "file rename failed : $!";
+move ($filedir . "\\" . $filename . "_" . $year . $mon . $mday . $hour. $min. $sec, $dir) or die "file rename failed : $!";
+copy ($file, $dir);
+}
+else
+{
+copy ($file, "c:\\skoipatch\\tmp\\new");
+
+copy ($file, $dir)
+}
+}
