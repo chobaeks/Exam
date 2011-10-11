@@ -1,0 +1,14 @@
+my %hash
+
+$hash{"fred"} = "fileinstone";
+
+my %hash =
+(
+ "fred" => "fileinstone",
+ "test => "test2",
+ );
+
+키 값의 숫자를 가져오는 내용
+my $count = keys %hash
+
+exists $book {"dino"}
