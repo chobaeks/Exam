@@ -3,11 +3,12 @@ use strict;
 use warnings;
 use Wx;
 use Wx qw(:everything);
-use Wx::Event qw(EVT_MENU EVT_BUTTON);
-use File::Basename;
+use Wx::Event qw(EVT_MENU EVT_BUTTON EVT_LISTBOX_DCLICK EVT_LIST_COL_BEGIN_DRAG EVT_DROP_FILES);
+use File::Basename; 
 use File::Copy;
 use Wx::Perl::Packager;
 use PAR;
+use Encode::KR;
 use 5.010;
 
 my $sec;
@@ -16,23 +17,27 @@ my $hour;
 my $mday;
 my $mon;
 my $year;
-	
+
 my $openpath = "C:\\patch";
 my @fullpathlist;
 
 my $m = Wx::SimpleApp->new;
-my $f = Wx::Frame->new (undef, -1, "Patch",[300,300], [760,350]);
+my $f = Wx::Frame->new (undef, -1, "Patch", [300,300], [760,350]);
 
-#my $Background = Wx::ListCtrl->new ($f, -1, [5,5], [733,303]);
 my $TextBox1 = Wx::TextCtrl->new ($f, -1, "BookMark List", [22,10], [90,17], wxTE_READONLY );
 my $TextBox2 = Wx::TextCtrl->new ($f, -1, "Save Path", [22,100], [90,17], wxTE_READONLY );
 my $TextBox3 = Wx::TextCtrl->new ($f, -1, "File List", [22,130], [90,17], wxTE_READONLY );
 my $TextBox4 = Wx::TextCtrl->new ($f, -1, "Comment", [22,265], [90,17], wxTE_READONLY );
 
-my $ListItem = Wx::ListItem->new;
+#my $ListItem = Wx::ListItem->new;
+
+#SavePath
 my $ListBox1 = Wx::ListBox->new ($f, -1, [120,100], [500,20]);
-my $ListBox2 = Wx::ListCtrl->new ($f, -1, [120,130], [500,130], wxLC_REPORT);
+#BookMarkList
 my $ListBox3 = Wx::ListBox->new ($f, -1, [120,10], [500,80]);
+#FileList
+my $ListBox2 = Wx::ListCtrl->new ($f, -1, [120,130], [500,130], wxLC_REPORT);
+#comment
 my $ListBox4 = Wx::TextCtrl->new ($f, -1, "", [120,265], [500,20]);
 
 $ListBox2->InsertColumn(0, "File Path",wxLIST_FORMAT_LEFT,300);
@@ -59,32 +64,37 @@ $ListBox3->Append ("c:\\windows\\softcamp\\vsd");
 $ListBox3->Append ("c:\\windows\\softcamp\\di");
 $ListBox3->Append ("c:\\windows\\softcamp\\sdk");
 
+EVT_LISTBOX_DCLICK ($f, $ListBox3, \&on_BookMarkList_double_click );
+EVT_LIST_COL_BEGIN_DRAG ($f, $ListBox2, \&on_fileslist_drag);
+
+sub on_fileslist_drag
+{
+print "Test" . "\n";
+	
+}
+
+sub on_BookMarkList_double_click
+{
+	$ListBox1->SetString(0, $_[1]->GetString());
+}
+
 sub play_bookmarkuse_event
 {
-	$ListBox1->SetString(0, $ListBox3->GetString ($ListBox3->GetSelection ()));
-	$openpath = $ListBox3->GetString ($ListBox3->GetSelection ());
+	$ListBox1->SetString(0, $ListBox3->GetString ($ListBox3->GetSelection()));
+	$openpath = $ListBox3->GetString ($ListBox3->GetSelection());
 }
 
 sub open_dirpath_event
 {
-
 	my $prevdir ="./";
+	my $dialog = Wx::DirDialog->new	($f, "Open Directory", $prevdir, 0, wxDefaultPosition,);
 
-	my( $this, $event ) = @_;
-	my $dialog = Wx::DirDialog->new 
-		( $f,          
-		  "Open Directory",
-		  $prevdir,
-		  0,
-		  wxDefaultPosition,
-		);
-
-	if( $dialog->ShowModal != wxID_CANCEL ) 
+	if($dialog->ShowModal != wxID_CANCEL) 
 	{
 		$ListBox1->SetString(0, $dialog->GetPath());
 		$openpath = $dialog->GetPath();
 	}
-	
+
 	$dialog->Refresh;     
 }
 
@@ -94,27 +104,20 @@ sub open_savepath_event
 	my $prevdir ="./";
 	my $prevfile='';
 
-	my( $this, $event ) = @_;
-	my $dialog = Wx::FileDialog->new
-		( $f,          
-		  "Open", 
-		  $prevdir, $prevfile,
-		  "|*.*|All files (*.*)", #확장자의 설�
-		  wxFD_OPEN | wxFD_MULTIPLE
-#이부분의 스트알 빼고는 거의 같음
-		);
+	my $dialog = Wx::FileDialog->new( $f, "List Add", $prevdir, $prevfile, "|*.*|All files (*.*)", wxFD_OPEN | wxFD_MULTIPLE);
 
 	if( $dialog->ShowModal != wxID_CANCEL ) 
 	{
 		foreach ($dialog->GetFilenames)
 		{
-			$ListItem->SetText($dialog->GetDirectory . $_);
+			#$ListItem->SetText($dialog->GetDirectory . $_);
 			$ListBox2->InsertStringItem(0, $dialog->GetDirectory);
 			$ListBox2->SetItem(0, 1, $_);
 
 			push (@fullpathlist, $dialog->GetDirectory . "\\" .$_);           
 		} 
 	}
+	
 	$dialog->Refresh;              
 }
 
@@ -122,7 +125,7 @@ sub open_savepath_event
 sub open_listdelete_event
 {
 	waring_window ("Sorry. It's not Ready") and return;
-	
+
 	my $item = -1;
 
 	while (1)
@@ -162,19 +165,18 @@ sub play_menu_event
 
 	waring_window ("$openpath\nIt's not directory or does not exist. Please insert real directory.") and return unless (-d $openpath);
 	waring_window ("Not have file list. Please insert at least one of the file.") and return if (@fullpathlist == 0);
-	
-	
+
 	($sec, $min, $hour, $mday, $mon, $year) = localtime;
 
 	$year = 1900 + $year;
 	++$mon;
-	
+
 	waring_window ("already c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "is make. Please try again later.") and return if (-d ("c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1)));
-	 
+
 	mkdir "c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1), 0755 or warn "Cannot make fred directory: $!";
 	mkdir "c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\old", 0755 or warn "Cannot make fred directory: $!";
 	mkdir "c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\new", 0755 or warn "Cannot make fred directory: $!";
-	
+
 	foreach (@fullpathlist)
 	{
 		copyandrename (dirname ($_), basename ($_), $openpath);
@@ -187,19 +189,19 @@ sub copyandrename
 	my $file;
 	my $filedir;
 	my $filename;
-	
+
 	$filedir = $_[0];
 	$filename = $_[1];
 	$dir = $_[2];
 	$file = $filedir . "\\" . $filename;
 
-	#print $filedir ."\n". $filename ."\n". $dir . "\n";
-	#print $dir . "\\" . $filename . "\n";
+#print $filedir ."\n". $filename ."\n". $dir . "\n";
+#print $dir . "\\" . $filename . "\n";
 
 	if (-e $dir . "\\" . $filename)
 	{
 		print "have\n";
-		
+
 		copy ($file, "c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\new");
 		copy ($dir . "\\" . $filename, "c:\\skoipatch\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\old");
 
