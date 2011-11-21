@@ -250,7 +250,11 @@ sub play_menu_event
 #c:\\patchhistory 폴더가 없을 경우 생성한다.
 	mkdir "c:\\patchhistory", 0755 or warn "Cannot make fred directory: $!" unless (-d "c:\\patchhistory");
 #$openpath 가 폴더가 아닐 경우 경고창이 나오며 종료된다.
+
+	chomp ($openpath);
+	
 	waring_window ("$openpath\nIt's not directory or does not exist. Please insert real directory.") and return unless (-d $openpath);
+	
 #@fullpathlist 에 목록이 하나도 없을 경우 경고창이 나오며 종료된다.
 	waring_window ("Not have file list. Please insert at least one of the file.") and return if (@fullpathlist == 0);
 
