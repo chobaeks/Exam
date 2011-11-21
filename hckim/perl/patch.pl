@@ -8,7 +8,7 @@ use File::Basename;
 use File::Copy;
 use Wx::Perl::Packager;
 use PAR;
-use Encode::KR;
+use Encode;
 use 5.010;
 
 my $sec;
@@ -50,6 +50,7 @@ my $button3 = Wx::Button->new ($f, -1, "List Delete", [630,160], [100,20]);
 my $button4 = Wx::Button->new ($f, -1, "List Reset", [630,190], [100,20]);
 my $button5 = Wx::Button->new ($f, -1, "Run", [630,265], [100,20]);
 my $button6 = Wx::Button->new ($f, -1, "Select Use", [630,10], [100,20]);
+my $button7 = Wx::Button->new ($f, -1, "List Open", [630,40], [100,20]);
 
 EVT_BUTTON ($f, $button1, \&open_dirpath_event);
 EVT_BUTTON ($f, $button2, \&open_savepath_event);
@@ -57,20 +58,108 @@ EVT_BUTTON ($f, $button3, \&open_listdelete_event);
 EVT_BUTTON ($f, $button4, \&open_listreset_event);
 EVT_BUTTON ($f, $button5, \&play_menu_event);
 EVT_BUTTON ($f, $button6, \&play_bookmarkuse_event);
+EVT_BUTTON ($f, $button7, \&play_bookmarklistopen_event);
 
 $ListBox1->Append ($openpath);
-$ListBox3->Append ("c:\\windows");
-$ListBox3->Append ("c:\\windows\\softcamp\\common");
-$ListBox3->Append ("c:\\windows\\softcamp\\vsd");
-$ListBox3->Append ("c:\\windows\\softcamp\\di");
-$ListBox3->Append ("c:\\windows\\softcamp\\sdk");
 
 EVT_LISTBOX_DCLICK ($f, $ListBox3, \&on_BookMarkList_double_click );
-EVT_LIST_COL_BEGIN_DRAG ($f, $ListBox2, \&on_fileslist_drag);
+
+my $open;
+#파일메뉴를 생성
+my $file_menu = Wx::Menu->new; #하나의 메뉴를 생성
+
+my $open_pathhistory = $file_menu->Append (-1, 'Open Patch History');
+
+$file_menu->AppendSeparator();#메뉴에서 가운데 ---으로 나누는것 표시
+
+my $bookmark_list_open_menu = $file_menu->Append (-1, 'Bookmark List Open');
+
+$file_menu->AppendSeparator();#메뉴에서 가운데 ---으로 나누는것 표시
+
+my $savepath_open_menu = $file_menu->Append (-1, 'Savepath Open');
+
+$file_menu->AppendSeparator();#메뉴에서 가운데 ---으로 나누는것 표시
+
+my $list_add_menu = $file_menu->Append (-1, 'List Add');
+my $list_delete_menu = $file_menu->Append (-1, 'List Delete');
+my $list_reset_menu = $file_menu->Append (-1, 'List Reset');
+
+$file_menu->AppendSeparator();#메뉴에서 가운데 ---으로 나누는것 표시
+
+my $run_menu = $file_menu->Append (-1, 'Run');
+
+$file_menu->AppendSeparator();#메뉴에서 가운데 ---으로 나누는것 표시
+
+my $exit_menu = $file_menu->Append (-1, 'Exit');
+
+EVT_MENU($f, $open_pathhistory, \&open_pathhistory_event);
+EVT_MENU($f, $bookmark_list_open_menu, \&play_bookmarklistopen_event);
+EVT_MENU($f, $savepath_open_menu, \&open_dirpath_event);
+EVT_MENU($f, $list_add_menu, \&open_savepath_event);
+EVT_MENU($f, $list_delete_menu, \&open_listdelete_event);
+EVT_MENU($f, $list_reset_menu, \&Bookmarklist_reset);
+EVT_MENU($f, $run_menu, \&play_menu_event);
+EVT_MENU($f, $exit_menu, sub {$_[0]->Close(1)});
+
+my $bar = Wx::MenuBar->new; #메뉴바 생성
+
+#Append(위에서 만든메뉴, 메뉴바의 라벨)
+$bar->Append($file_menu,'Menu'); #메뉴바에 메뉴생성
+$f->SetMenuBar($bar);#프레임에 메뉴를 세팅한다.
+
+mkdir "c:\\patchhistory", 0755 or warn "Cannot make fred directory: $!" unless (-d "c:\\patchhistory");
+
+#bookmark.ini 파일이 없을 경우 생성한다.
+#나머지작업 bookmark.ini 의 폴더를 직접 지정할 수 있도록 변경
+unless (-e "c:\\patchhistory\\bookmark.ini")
+{
+	open my $tmp, '>', "c:\\patchhistory\\bookmark.ini" or die $!;
+	print $tmp "##it's bookmark list." . "\n";
+	print $tmp "##If a list of changes you need to restart Program." . "\n";
+	print $tmp "c:\\windows" . "\n";
+	print $tmp "c:\\windows\\softcamp\\vsd" . "\n";
+	print $tmp "c:\\windows\\softcamp\\di" . "\n";
+	print $tmp "c:\\windows\\softcamp\\common" . "\n";
+	print $tmp "c:\\windows\\softcamp\\sds" . "\n";
+	close $tmp;
+}
+
+Bookmarklist_reset ();
+
+sub open_pathhistory_event
+{
+	waring_window ("Not find c:\\patchhistory folder.") unless (-d "c:\\patchhistory");
+	
+	system ("explorer c:\\patchhistory");
+}
+
+
+sub Bookmarklist_reset
+{
+open my $BOOKMARK, '<', "c:\\patchhistory\\bookmark.ini" or die $!;
+
+	while (<$BOOKMARK>)
+	{
+		unless (/^##/)
+		{ 
+			$ListBox3->Append($_);
+		}
+	}
+}
+
+
+#나머지작업 북마크 리스트 변경시에 자동으로 갱신되도록 변경 (ListBox 를 ListCtrl 로 변경하면 가능하지만 다른 부분에 대한 예외처리가 많이 필요함. ListBox 의 리스트를 삭제하거나 리셋하는것이 가능하다면 쉽게 가능함)
+sub play_bookmarklistopen_event
+{
+	system 'notepad c:\\patchhistory\\bookmark.ini';
+	#Bookmarklist_reset ();
+}
+
 
 sub on_BookMarkList_double_click
 {
 	$ListBox1->SetString(0, $_[1]->GetString());
+	$openpath = $_[1]->GetString();
 }
 
 sub play_bookmarkuse_event
@@ -86,7 +175,7 @@ sub open_dirpath_event
 
 	if($dialog->ShowModal != wxID_CANCEL) 
 	{
-		$ListBox1->SetString(0, $dialog->GetPath());
+		$ListBox1->SetString (0, $dialog->GetPath());
 		$openpath = $dialog->GetPath();
 	}
 
@@ -109,9 +198,9 @@ sub open_savepath_event
 			next if array_exists ($dialog->GetDirectory . "\\" . $_);
 			
 #$ListItem->SetText($dialog->GetDirectory . $_);
-			$ListBox2->InsertStringItem(0,$_);
+			$ListBox2->InsertStringItem (0,$_);
 			
-			$ListBox2->SetItem(0, 1, $dialog->GetDirectory);
+			$ListBox2->SetItem (0, 1, $dialog->GetDirectory);
 			push (@fullpathlist, $dialog->GetDirectory . "\\" .$_);           
 		} 
 	}
@@ -180,9 +269,10 @@ sub play_menu_event
 
 	waring_window ("already c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "is make. Please try again later.") and return if (-d ("c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1)));
 
-	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1), 0755 or warn "Cannot make fred directory: $!";
-	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\old", 0755 or warn "Cannot make fred directory: $!";
-	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" .  $ListBox4->GetLineText(1) . "\\new", 0755 or warn "Cannot make fred directory: $!";
+#나머지작업 comment (폴더 생성) 한글 입력되도록 변경 encode ("euc-kr" , decode ("utf-8", "한글")) 
+	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1), 0755 or warn "Cannot make fred directory: $!";
+	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "\\old", 0755 or warn "Cannot make fred directory: $!";
+	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "\\new", 0755 or warn "Cannot make fred directory: $!";
 
 	foreach (@fullpathlist)
 	{
