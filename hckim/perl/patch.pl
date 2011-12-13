@@ -50,7 +50,7 @@ my $button3 = Wx::Button->new ($f, -1, "List Delete", [630,160], [100,20]);
 my $button4 = Wx::Button->new ($f, -1, "List Reset", [630,190], [100,20]);
 my $button5 = Wx::Button->new ($f, -1, "Run", [630,265], [100,20]);
 my $button6 = Wx::Button->new ($f, -1, "Select Use", [630,10], [100,20]);
-my $button7 = Wx::Button->new ($f, -1, "List Open", [630,40], [100,20]);
+my $button7 = Wx::Button->new ($f, -1, "Bookmark Open", [630,40], [100,20]);
 
 EVT_BUTTON ($f, $button1, \&open_dirpath_event);
 EVT_BUTTON ($f, $button2, \&open_savepath_event);
@@ -133,7 +133,7 @@ sub open_pathhistory_event
 	system ("explorer c:\\patchhistory");
 }
 
-
+# bookmark.ini 파일을 불러와 BookMarkList 창에 출력해준다. ## 로 시작하는 부분은 제외하고 가져온다.
 sub Bookmarklist_reset
 {
 open my $BOOKMARK, '<', "c:\\patchhistory\\bookmark.ini" or die $!;
@@ -148,6 +148,7 @@ open my $BOOKMARK, '<', "c:\\patchhistory\\bookmark.ini" or die $!;
 }
 
 
+# "List Open" 클릭시에 이벤트
 #나머지작업 북마크 리스트 변경시에 자동으로 갱신되도록 변경 (ListBox 를 ListCtrl 로 변경하면 가능하지만 다른 부분에 대한 예외처리가 많이 필요함. ListBox 의 리스트를 삭제하거나 리셋하는것이 가능하다면 쉽게 가능함)
 sub play_bookmarklistopen_event
 {
@@ -156,18 +157,23 @@ sub play_bookmarklistopen_event
 }
 
 
+#BookMarkList 중 하나의 목록을 더블클릭했을시 이벤트
 sub on_BookMarkList_double_click
 {
 	$ListBox1->SetString(0, $_[1]->GetString());
 	$openpath = $_[1]->GetString();
 }
 
+
+# "Select Use" 버튼을 눌렀을시에 이벤트
 sub play_bookmarkuse_event
 {
 	$ListBox1->SetString(0, $ListBox3->GetString ($ListBox3->GetSelection()));
 	$openpath = $ListBox3->GetString ($ListBox3->GetSelection());
 }
 
+
+# "Open" 버튼을 눌렀을시 이벤트
 sub open_dirpath_event
 {
 	my $prevdir ="./";
@@ -183,10 +189,11 @@ sub open_dirpath_event
 }
 
 
+# "List Add" 버튼을 눌렀을시 이벤트
 sub open_savepath_event
 {	
 	my $prevdir ="./";
-	my $prevfile='';
+	my $prevfile='';#
 
 	my $dialog = Wx::FileDialog->new( $f, "List Add", $prevdir, $prevfile, "|*.*|All files (*.*)", wxFD_OPEN | wxFD_MULTIPLE);
 
@@ -209,7 +216,9 @@ sub open_savepath_event
 }
 
 
-sub open_listdelete_event
+# "List Delete" 버튼을 눌렀을시 이벤트
+#select 된 리스트를 확인하여 메뉴상에서 삭제하고 @fullpathlist 의 배열에서도 해당 목록을 삭제한다.
+sub open_listdelete_event 
 {
 	my $item = -1;
 
@@ -231,9 +240,11 @@ sub open_listdelete_event
 }
 
 
+# "List Reset" 버튼을 눌렀을시 이벤트
 sub open_listreset_event
 {
 	$ListBox2->DeleteAllItems ();
+#배열을 초기화한다.
 	@fullpathlist = qw();
 }
 
@@ -243,6 +254,7 @@ sub waring_window
 	my $waring = Wx::MessageDialog->new (undef, $_[0] , 'Waring', wxOK|wxICON_INFORMATION);
 	$waring->ShowModal();
 }
+
 
 #play 버튼 이벤트. 예외적인 처리를 해주고 @fullpathlist 를 foreach 로 copyandrename 을 돌린다.
 sub play_menu_event
@@ -286,6 +298,7 @@ sub play_menu_event
 	waring_window ("Patch Complete.");
 }
 
+
 #파일경로, 파일이름, 복사할경로를 변수로 받아 처리. 복사할경로에 이미 파일이 있다면 파일이름을 "_날짜" 로 변경하고 복사한다. 복사할경로의 기존파일을 patchhistory\날짜\old\에 복사하고 새롭게 복사한파일을 patchhistory\날짜\new\ 에 복사한다. 
 sub copyandrename
 {      
@@ -320,6 +333,7 @@ sub copyandrename
 	}
 }
 
+
 #@fullpathlist 에 똑같은 변수가 있으면 1 을 리턴 없으면 0 을 리턴. 
 #나머지작업 @fullpathlist 도 받아서 내부배열로 처리할수 있도록 변경해야함
 sub array_exists
@@ -337,6 +351,7 @@ sub array_exists
 	return 0;
 }
 
+
 #@fullpathlist_tmp 에 @fullpathlist 을 넣은 후 @fullpathlist 을 초기화한다. @fullpathlist_tmp 을 foreach 로 돌려 동일한 변수가 있는 경우를 제외하고 @fullpathlist 에 다시 push 한다. 
 #나머지작업 한개의 목록마다 배열을 재생성하므로 목록을 많이 선택하거나 배열이 많을 경우 속도가 많이 걸릴 수 있다. 다른 방법도 더 고려해보는게 좋을듯.
 sub array_list_delete
@@ -353,6 +368,7 @@ sub array_list_delete
 	
 	@fullpathlist_tmp = qw();
 }				
+
 
 #시간 변수가 한자리일 경우 폴더 자릿수가 맞지 않으므로 0~9 일 경우에는 앞에 0 을 한자리 더 붙여준다. 
 sub change_time
