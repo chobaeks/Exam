@@ -18,17 +18,20 @@ my $mday;
 my $mon;
 my $year;
 
-my $openpath = "C:\\windows\\softcamp\\vsd";
+my $openpath;
 my @fullpathlist;
 my @fullpathlist_tmp;
+my @patchsavepath;
+my @patchfilepath;
 
 my $m = Wx::SimpleApp->new;
-my $f = Wx::Frame->new (undef, -1, "Patch", [300,300], [760,350]);
+my $f = Wx::Frame->new (undef, -1, "Patch", [100,100], [760,520]);
 
 my $TextBox1 = Wx::TextCtrl->new ($f, -1, "BookMark List", [22,10], [90,17], wxTE_READONLY );
 my $TextBox2 = Wx::TextCtrl->new ($f, -1, "Save Path", [22,100], [90,17], wxTE_READONLY );
 my $TextBox3 = Wx::TextCtrl->new ($f, -1, "File List", [22,130], [90,17], wxTE_READONLY );
-my $TextBox4 = Wx::TextCtrl->new ($f, -1, "Comment", [22,265], [90,17], wxTE_READONLY );
+my $TextBox5 = Wx::TextCtrl->new ($f, -1, "Patch List", [22,290], [90,17], wxTE_READONLY );
+my $TextBox4 = Wx::TextCtrl->new ($f, -1, "Comment", [22,430], [90,17], wxTE_READONLY );
 
 #my $ListItem = Wx::ListItem->new;
 
@@ -39,18 +42,25 @@ my $ListBox3 = Wx::ListBox->new ($f, -1, [120,10], [500,80]);
 #FileList
 my $ListBox2 = Wx::ListCtrl->new ($f, -1, [120,130], [500,130], wxLC_REPORT);
 #comment
-my $ListBox4 = Wx::TextCtrl->new ($f, -1, "", [120,265], [500,20]);
+my $ListBox4 = Wx::TextCtrl->new ($f, -1, "", [120,430], [500,20]);
+#PatchList
+my $ListBox5 = Wx::ListCtrl->new ($f, -1, [120,290], [500,130], wxLC_REPORT);
 
 $ListBox2->InsertColumn(1, "File Path",wxLIST_FORMAT_LEFT,300);
 $ListBox2->InsertColumn(0, "File Name",wxLIST_FORMAT_LEFT,200);
+
+$ListBox5->InsertColumn(1, "Save Path",wxLIST_FORMAT_LEFT,300);
+$ListBox5->InsertColumn(0, "File Path",wxLIST_FORMAT_LEFT,200);
 
 my $button1 = Wx::Button->new ($f, -1, "Open", [630,100], [100,20]);
 my $button2 = Wx::Button->new ($f, -1, "List Add", [630,130], [100,20]);
 my $button3 = Wx::Button->new ($f, -1, "List Delete", [630,160], [100,20]);
 my $button4 = Wx::Button->new ($f, -1, "List Reset", [630,190], [100,20]);
-my $button5 = Wx::Button->new ($f, -1, "Run", [630,265], [100,20]);
+my $button5 = Wx::Button->new ($f, -1, "Run", [630,430], [100,20]);
 my $button6 = Wx::Button->new ($f, -1, "Select Use", [630,10], [100,20]);
 my $button7 = Wx::Button->new ($f, -1, "Bookmark Open", [630,40], [100,20]);
+my $button8 = Wx::Button->new ($f, -1, "Insert", [330,265], [100,20]);
+my $button9 = Wx::Button->new ($f, -1, "List Reset", [630,290], [100,20]);
 
 EVT_BUTTON ($f, $button1, \&open_dirpath_event);
 EVT_BUTTON ($f, $button2, \&open_savepath_event);
@@ -59,8 +69,10 @@ EVT_BUTTON ($f, $button4, \&open_listreset_event);
 EVT_BUTTON ($f, $button5, \&play_menu_event);
 EVT_BUTTON ($f, $button6, \&play_bookmarkuse_event);
 EVT_BUTTON ($f, $button7, \&play_bookmarklistopen_event);
+EVT_BUTTON ($f, $button8, \&play_Insert_event);
+EVT_BUTTON ($f, $button9, \&play_patchlistreset_event);
 
-$ListBox1->Append ($openpath);
+#$ListBox1->Append ($openpath);
 
 EVT_LISTBOX_DCLICK ($f, $ListBox3, \&on_BookMarkList_double_click );
 
@@ -116,7 +128,7 @@ unless (-e "c:\\patchhistory\\bookmark.ini")
 	open my $tmp, '>', "c:\\patchhistory\\bookmark.ini" or die $!;
 	print $tmp "##it's bookmark list." . "\n";
 	print $tmp "##If a list of changes you need to restart Program." . "\n";
-	print $tmp "c:\\windows" . "\n";
+	print $tmp "##Base = c:\\windows" . "\n";
 	print $tmp "c:\\windows\\softcamp\\vsd" . "\n";
 	print $tmp "c:\\windows\\softcamp\\di" . "\n";
 	print $tmp "c:\\windows\\softcamp\\common" . "\n";
@@ -133,6 +145,7 @@ sub open_pathhistory_event
 	system ("explorer c:\\patchhistory");
 }
 
+
 # bookmark.ini 파일을 불러와 BookMarkList 창에 출력해준다. ## 로 시작하는 부분은 제외하고 가져온다.
 sub Bookmarklist_reset
 {
@@ -140,6 +153,13 @@ open my $BOOKMARK, '<', "c:\\patchhistory\\bookmark.ini" or die $!;
 
 	while (<$BOOKMARK>)
 	{
+		if (/(^##Base = )(.*)/)
+		{
+			$ListBox3->Append($2);
+			$ListBox1->Append($2);
+			$openpath = $2;			
+		}
+		
 		unless (/^##/)
 		{ 
 			$ListBox3->Append($_);
@@ -185,7 +205,7 @@ sub open_dirpath_event
 		$openpath = $dialog->GetPath();
 	}
 
-	$dialog->Refresh;     
+	$dialog->Refresh;
 }
 
 
@@ -205,7 +225,7 @@ sub open_savepath_event
 			next if array_exists ($dialog->GetDirectory . "\\" . $_);
 			
 #$ListItem->SetText($dialog->GetDirectory . $_);
-			$ListBox2->InsertStringItem (0,$_);
+			$ListBox2->InsertStringItem (0, $_);
 			
 			$ListBox2->SetItem (0, 1, $dialog->GetDirectory);
 			push (@fullpathlist, $dialog->GetDirectory . "\\" .$_);           
@@ -248,10 +268,11 @@ sub open_listreset_event
 	@fullpathlist = qw();
 }
 
+
 #변수에 해당하는 메세지를 경고창으로 띄워준다.
 sub waring_window
 {    
-	my $waring = Wx::MessageDialog->new (undef, $_[0] , 'Waring', wxOK|wxICON_INFORMATION);
+	my $waring = Wx::MessageDialog->new (undef, $_[0], 'Waring', wxOK|wxICON_INFORMATION);
 	$waring->ShowModal();
 }
 
@@ -259,29 +280,32 @@ sub waring_window
 #play 버튼 이벤트. 예외적인 처리를 해주고 @fullpathlist 를 foreach 로 copyandrename 을 돌린다.
 sub play_menu_event
 {   		
+	my @patchfilepath_tmp;
+	my $tmp;
+	
+	@patchfilepath_tmp = @patchfilepath;
+	
 #c:\\patchhistory 폴더가 없을 경우 생성한다.
 	mkdir "c:\\patchhistory", 0755 or warn "Cannot make fred directory: $!" unless (-d "c:\\patchhistory");
 #$openpath 가 폴더가 아닐 경우 경고창이 나오며 종료된다.
-
 	chomp ($openpath);
 	
-	waring_window ("$openpath\nIt's not directory or does not exist. Please insert real directory.") and return unless (-d $openpath);
-	
-#@fullpathlist 에 목록이 하나도 없을 경우 경고창이 나오며 종료된다.
-	waring_window ("Not have file list. Please insert at least one of the file.") and return if (@fullpathlist == 0);
+#@patchfilepath 에 목록이 하나도 없을 경우 경고창이 나오며 종료된다.
+	waring_window ("Not have patch file list. Please insert at least one of the file.") and return if (@patchfilepath == 0);
 
 	($sec, $min, $hour, $mday, $mon, $year) = localtime;
 
 #시간 자릿수가 한자리일 경우 0 을 앞에 더 추가시킨다.
-#나머지작업 아래 5라인을 한줄로 변경 
+#나머지작업 아래 5라인을 한줄로 변경
+
+	++$mon;
+	$year = 1900 + $year;
+
 	$sec = change_time ($sec);
 	$min = change_time ($min);
 	$hour = change_time ($hour);
 	$mday = change_time ($mday);
 	$mon = change_time ($mon);
-
-	$year = 1900 + $year;
-	++$mon;
 
 	waring_window ("already c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "is make. Please try again later.") and return if (-d ("c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1)));
 
@@ -290,14 +314,14 @@ sub play_menu_event
 	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "\\old", 0755 or warn "Cannot make fred directory: $!";
 	mkdir "c:\\patchhistory\\" . $year. "_" . $mon . "_" . $mday . "_" . $hour . $min . $sec . "_" . $ListBox4->GetLineText(1) . "\\new", 0755 or warn "Cannot make fred directory: $!";
 
-	foreach (@fullpathlist)
+	foreach (@patchsavepath)
 	{
-		copyandrename (dirname ($_), basename ($_), $openpath);
+		$tmp = shift @patchfilepath_tmp;
+		copyandrename (dirname ($tmp), basename ($tmp), $_);
 	}
 	
 	waring_window ("Patch Complete.");
 }
-
 
 #파일경로, 파일이름, 복사할경로를 변수로 받아 처리. 복사할경로에 이미 파일이 있다면 파일이름을 "_날짜" 로 변경하고 복사한다. 복사할경로의 기존파일을 patchhistory\날짜\old\에 복사하고 새롭게 복사한파일을 patchhistory\날짜\new\ 에 복사한다. 
 sub copyandrename
@@ -380,12 +404,55 @@ sub change_time
 	{
 		if ($check == $_)
 		{
-			$check = 0 . $check;
+					$check = 0 . $check;
 		}
 	}
 	
 	$check;
 }
+
+sub play_Insert_event
+{
+	my @patchfilepath_tmp;
+	
+	@patchfilepath_tmp = @patchfilepath;	
+		
+#$openpath 가 폴더가 아닐 경우 경고창이 나오며 종료된다.
+	chomp ($openpath);
+	
+	waring_window ("$openpath\nIt's not directory or does not exist. Please insert real directory.") and return unless (-d $openpath);
+	
+#@fullpathlist 에 목록이 하나도 없을 경우 경고창이 나오며 종료된다.
+	waring_window ("Not have file list. Please insert at least one of the file.") and return if (@fullpathlist == 0);
+	
+	foreach (@fullpathlist)
+	{
+		my $patchfile_tmp = $_;
+		
+		foreach (@patchsavepath)
+		{
+			if ($_ eq $openpath)
+			{	
+				waring_window ("same") if (shift @patchfilepath_tmp eq $patchfile_tmp);	
+			}	
+		}
+
+		$ListBox5->InsertStringItem (0, $_);			
+		$ListBox5->SetItem (0, 1, $openpath);
+				
+		push (@patchsavepath, $openpath);
+		push (@patchfilepath, $_);
+	}
+}
+
+sub play_patchlistreset_event
+{
+	@patchsavepath = qw();
+	@patchfilepath = qw();
+		
+	$ListBox5->DeleteAllItems ();
+}
+
 
 $f->Show();
 $m->MainLoop();
