@@ -1,2 +1,2 @@
-set disable_vrome_key=<A-d>
+set disable_vrome_key=<C-f>
 unmap <C-f>
