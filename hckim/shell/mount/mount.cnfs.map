@@ -1,0 +1,8 @@
+TIM_DATA3	-ro,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/TIM_DATA3
+DEV_TOOL	-ro,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/DEV_TOOL
+HDB_POOL	-ro,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/HDB_POOL
+TREXPROD	-rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/TREXPROD
+TESTDATA	-rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/TESTDATA
+area51	-rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs.icnl.sap.corp:/filer/area51
+home	-rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 cnfs2.icnl.sap.corp:/filer/home
+

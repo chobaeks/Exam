@@ -1,3 +1,4 @@
+#!/bin/bash
 LOCALSIDS=`cat /usr/sap/sapservices | perl -pi -e 's/LD_LIBRARY_PATH=\/usr\/sap\///g' | perl -pi -e 's/\/HDB.*//g' | sed 1d | sed 1d`
 BINARYPATH=/MD1200_1/hckim/EPMBranch/opt/linuxx86_64/Lastbuild/__installer.HDB
 CHECKSIDFOLDER=`ls /usr/sap`

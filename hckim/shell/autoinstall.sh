@@ -130,7 +130,7 @@ USERID=`$BINARYPATH/__installer.HDB/hdbinst --help | grep uid | perl -pi -e 's/\
 				TESTPACKAGE=1;;
 
 			*)
-				echo "Error: ${PARAMETERS["$A"]} is unknown command"
+				echo "Error: ${PARAMETERS["$A"]} is unknown parameter"
 				USUAGE_MESSAGE
 				exit;;
 		esac
@@ -154,7 +154,7 @@ function CHECK_SID ()
 
 function START ()
 {
-$BINARYPATH/__installer.HDB/hdbinst --sapmnt=$INSTALLPATH -s $SID --number=$ID --password=trextrex --home=/usr/sap/$SID/home --shell=/bin/sh --userid=$USERID --datapath=$INSTALLPATH/$SID/global/hdb/data --logpath=$INSTALLPATH/$SID/global/hdb/log --system_user_password=manager --autostart=n
+$BINARYPATH/__installer.HDB/hdbinst --sapmnt=$INSTALLPATH -s $SID --number=$ID --password=trextrex --home=/usr/sap/$SID/home --shell=/bin/sh --userid=$USERID --datapath=$INSTALLPATH/$SID/global/hdb/data --logpath=$INSTALLPATH/$SID/global/hdb/log --system_user_password=manager --autostart=n --system_usage=test
 
 sleep 300
 
