@@ -1,1 +1,70 @@
-abc abc abc%abc% abc%  def ghhk
+4K/1G bs=4096 count=252144
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 18.3809 s, 58.4 MB/s write
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 16.4153 s, 65.4 MB/s
+262144+0 records in
+262144+0 records out
+1073741824 bytes (1.1 GB) copied, 14.9388 s, 71.9 MB/s
+16K/1G bs=16384 count=65536
+65536+0 records in
+65536+0 records out
+1073741824 bytes (1.1 GB) copied, 7.37209 s, 146 MB/s
+65536+0 records in
+65536+0 records out
+1073741824 bytes (1.1 GB) copied, 6.63778 s, 162 MB/s
+65536+0 records in
+65536+0 records out
+1073741824 bytes (1.1 GB) copied, 10.6574 s, 101 MB/s
+64K/1G bs=65536 count=16384
+16384+0 records in58.
+16384+0 records out
+1073741824 bytes (1.1 GB) copied, 3.31619 s, 324 MB/s
+16384+0 records in
+16384+0 records out
+1073741824 bytes (1.1 GB) copied, 6.35367 s, 169 MB/s
+16384+0 records in
+16384+0 records out
+1073741824 bytes (1.1 GB) copied, 12.618 s, 85.1 MB/s
+256K/1G bs=262144 count=4096
+4096+0 records in
+4096+0 records out
+1073741824 bytes (1.1 GB) copied, 2.48913 s, 431 MB/s
+4096+0 records in
+4096+0 records out
+1073741824 bytes (1.1 GB) copied, 3.49482 s, 307 MB/s
+4096+0 records in
+4096+0 records out
+1073741824 bytes (1.1 GB) copied, 9.30817 s, 115 MB/s
+1M/1G bs=1048576 count=1024
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 2.17965 s, 493 MB/s
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 2.59866 s, 413 MB/s
+1024+0 records in
+1024+0 records out
+1073741824 bytes (1.1 GB) copied, 8.09571 s, 133 MB/s
+4M/1G bs=4194304 count=256
+256+0 records in
+256+0 records out
+1073741824 bytes (1.1 GB) copied, 1.936 s, 555 MB/s
+256+0 records in
+256+0 records out
+1073741824 bytes (1.1 GB) copied, 7.14544 s, 150 MB/s
+256+0 records in
+256+0 records out
+1073741824 bytes (1.1 GB) copied, 12.7646 s, 84.1 MB/s
+16M/1G bs=16777216 count=64
+64+0 records in
+64+0 records out
+1073741824 bytes (1.1 GB) copied, 3.35958 s, 320 MB/s
+64+0 records in
+64+0 records out
+1073741824 bytes (1.1 GB) copied, 5.57199 s, 193 MB/s
+64+0 records in
+64+0 records out
+1073741824 bytes (1.1 GB) copied, 11.1323 s, 96.5 MB/s

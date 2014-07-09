@@ -1,0 +1,8 @@
+TIM_DATA3	-ro,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/TIM_DATA3
+DEV_TOOL	-rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/DEV_TOOL
+HDB_POOL	-ro,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/HDB_POOL
+TREXPROD	-rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/TREXPROD
+TESTDATA	-rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/TESTDATA
+area51		-rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs.icnl.sap.corp:/filer/area51
+home		-rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 cnfs2.icnl.sap.corp:/filer/home
+

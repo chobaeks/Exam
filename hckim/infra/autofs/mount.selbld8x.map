@@ -1,0 +1,8 @@
+vol41    -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.121:/vol/vol41
+vol42	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.121:/vol/vol42
+vol43	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.122:/vol/vol43
+vol44	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.122:/vol/vol44
+vol45	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.123:/vol/vol45
+vol46	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.123:/vol/vol46
+vol47	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.124:/vol/vol47
+vol48	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.124:/vol/vol48

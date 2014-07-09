@@ -1,0 +1,8 @@
+vol9	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.105:/vol/vol9
+vol10	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.105:/vol/vol10
+vol11	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.106:/vol/vol11
+vol12	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.106:/vol/vol12
+vol13	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.107:/vol/vol13
+vol14	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.107:/vol/vol14
+vol15	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.108:/vol/vol15
+vol16	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 192.168.0.108:/vol/vol16

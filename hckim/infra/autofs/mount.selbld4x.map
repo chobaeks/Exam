@@ -1,0 +1,8 @@
+vol33	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.226:/vol/vol33
+vol34	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.226:/vol/vol34
+vol35	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.227:/vol/vol35
+vol36	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.227:/vol/vol36
+vol37	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.228:/vol/vol37
+vol38	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.228:/vol/vol38
+vol39	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.229:/vol/vol39
+vol40	 -rw,bg,hard,intr,proto=tcp,nolock,noatime,timeo=14,retrans=2 10.60.44.229:/vol/vol40
