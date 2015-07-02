@@ -1,2 +1,0 @@
-INT1       -rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 selxeon5:/INT1
-INT2       -rw,hard,intr,proto=tcp,nolock,noatime,rsize=32768,wsize=32768 selxeon5:/INT2
